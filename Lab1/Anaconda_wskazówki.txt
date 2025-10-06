@@ -1,0 +1,43 @@
+PONIŻSZA INSTRUKCJA JEST DLA OSÓB, KTÓRE PLANUJĄ TROCHĘ LEPIEJ POZNAĆ PRACĘ ZE ŚRODOWISKAMI ANACONDY. JEŻELI NIE PLANUJESZ W DOMU UŻYWAĆ ŚRODOWISK, TO MOŻESZ JĄ POMINĄĆ
+
+AKTUALIZACJA ŚRODOWISKA, INSTALOWANIE NOWYCH BIBLIOTEK
+
+Jeżeli mamy gotowe środowisko z jakimś zestawem bibliotek, np. nasze środowisko PUM, którego używamy na zajęciach i wprowadzimy do niego jakieś zmiany (np. zaktualizujemy jakąś bibliotekę lub dodamy nową), powinniśmy zapisać do pliku .YML nową konfigurację środowiska. W ten sposób jeżeli napisany wcześniej skrypt nagle nie będzie działał, będziemy w stanie sprawdzić, co może być tego przyczyną - np. w nowej wersji biblioteki zmieniono coś w funkcji, której używamy lub pojawił się konflikt wersji używanych biliotek.
+
+Zainstalujmy teraz w naszym środowisku nową bibliotekę tables, która jest potrzebna do obsługi plików HDF - powiemy o nich więcej na kolejnych zajęciach. W skrócie - jest to format plików, który często wykorzystywany jest do przechowywania zbiorów danych, my będziemy go wykorzystywać do zapisywania wyekstrahowanych cech sygnałów.
+Żeby zainstalować tę bibliotekę, należy użyć komend:
+
+    conda activate PUM
+    pip install tables
+
+Żeby upewnić się, czy się zainstalowała, można wyświetlić wszystkie zainstalowane w środowisku pakiety i bilbioteki i sprawdzić, czy jest na liście:
+    
+    conda list
+
+Żeby wyeksportować aktualną konfigurację do pliku .YML, należy użyć komendy:
+    conda env export > new_environment.yml
+    
+Zwróć uwagę, jak dużo bibliotek jest w wyeksportowanym pliku - wynika to z tego, że podczas instalacji bibliotek wymienionych w pliku environment.yml konieczne było zainstalowanie wielu innych bibliotek, które umożliwiają ich działanie.
+
+
+Alternatywnie, zamiast instalować bibliotekę, a następnie eksportować plik .YML, można ręcznie dodać bibliotekę do pliku .YML, a następnie dokonać aktualizacji środowiska:
+1. na końcu pliku environment.yml dodaj linijkę:
+
+    - tables==3.6.1
+    
+    bibliotekę będzie instalowana przy użyciu pip, więc musi znaleźć się w grupie pozostałych bibliotek tak instalowanych (czyli np. opensmile, lightgbm) - zadbaj o odpowiednie miejsce dopisania tej linijki oraz wcięcie tekstu.
+    Jeżeli chcesz zachować poprzednią wersję pliku, żeby kontrolować historię wprowadzanych zmian, zapisz plik pod inną nazwą, np. dodaj do nazwy dzisiejszą datę.
+    
+2. użyj komendy:
+
+    conda env update -f environment.yml --prune
+    
+    Jeżeli nazwa nowego pliku .YML jest inna, zmień ją na właściwą.
+    
+    Użycie --prune spowoduje, że oprócz zainstalowania nowych bibliotek zostaną odintalowane te, których już nie ma na liście i nie są potrzebne do działania pozostałych bibliotek.
+    
+Wtedy jednak nie mamy zapisanych wersji bibliotek, które zainstalowały się dodatkowo, więc jeśli z jakieś powodu nam na tym zależy, to polecane jest pierwsze podejście.
+
+
+
+Jeżeli masz na swoim komputerze skonfigurowane środowisko pamiętaj o tym, żeby tam też wprowadzić te zmiany.
