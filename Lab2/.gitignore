@@ -1,2 +1,4 @@
 files_phrase.txt
 dane_testowe/
+files_labeled.csv
+knn_model.pkl
