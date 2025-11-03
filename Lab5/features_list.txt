@@ -1,0 +1,8 @@
+acousticness
+danceability
+energy
+instrumentalness
+liveness
+speechiness
+tempo
+valence
