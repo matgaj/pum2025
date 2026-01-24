@@ -56,6 +56,34 @@ def single_point_crossover(parent1, parent2):
 
     return offspring1, offspring2
 
+def multi_point_crossover(parent1, parent2, num_points=2):
+
+    if len(parent1) != len(parent2):
+        raise ValueError("Chromosomy rodziców muszą mieć taką samą długość")
+    
+    if len(parent1) < num_points:
+        return parent1, parent2
+    
+    '''
+    Losowanie liczby punktów krzyżowania.
+    Zapewnienie, że punkty są unikalne i posortowane.
+    Tworzenie potomków poprzez naprzemienne kopiowanie segmentów między punktami krzyżowania.
+    '''
+    
+    crossover_points = sorted(random.sample(range(1, len(parent1)), num_points))
+    offspring1, offspring2 = [], []
+    last_point = 0
+    for i, point in enumerate(crossover_points + [len(parent1)]):
+        if i % 2 == 0:
+            offspring1.extend(parent1[last_point:point])
+            offspring2.extend(parent2[last_point:point])
+        else:
+            offspring1.extend(parent2[last_point:point])
+            offspring2.extend(parent1[last_point:point])
+        last_point = point
+
+    return offspring1, offspring2
+
 
 def mutation(genome, num=1, probability=0.5):
     """
@@ -72,6 +100,17 @@ def mutation(genome, num=1, probability=0.5):
         if random.random() < probability:
             mutation_index = random.randint(0, len(mutated_genome) - 1)
             mutated_genome[mutation_index] = 1 - mutated_genome[mutation_index]
+
+    return mutated_genome
+
+def reorder_mutation(genome, num=1, probability=0.5):
+    # zamienia miejscami dwa losowe geny
+    mutated_genome = genome.copy()
+    for _ in range(num):
+        if random.random() < probability:
+            index1 = random.randint(0, len(mutated_genome) - 1)
+            index2 = random.randint(0, len(mutated_genome) - 1)
+            mutated_genome[index1], mutated_genome[index2] = mutated_genome[index2], mutated_genome[index1]
 
     return mutated_genome
 
@@ -171,10 +210,15 @@ def save_genome_to_midi(filename, genome, num_bars, num_notes, key, scale, octav
     melody.write('midi', filename)
 
 
-def run_evolution(parents, mutation1, mutation2=None, num_mutations=1, mutation_probability=0.5):
+def run_evolution(parents, mutation1, mutation2, num_mutations=2, mutation_probability=0.5):
     # Funkcja przeprowadza krzyżowanie i mutacje, zwraca nowe osobniki
-    offspring1, offspring2 = single_point_crossover(parents[0], parents[1])
-    offspring1 = mutation1(offspring1, num=num_mutations, probability=mutation_probability)
+    num_crossover_points = random.randint(1, 4)
+    offspring1, offspring2 = multi_point_crossover(parents[0], parents[1], num_crossover_points)
+    if random.random() < 0.5:
+        offspring1 = mutation1(offspring1, num=num_mutations, probability=mutation_probability)
+    else:
+        offspring1 = mutation2(offspring1, num=num_mutations, probability=mutation_probability)
+        
     return offspring1, offspring2
 
 
@@ -208,6 +252,7 @@ def main(num_bars, num_notes, key, scale, octave, population_size, num_mutations
             parents = select_pair(population, fitness_lookup, population_fitness)
             offspring1, offspring2 = run_evolution(parents=parents,
                                                    mutation1=mutation,
+                                                   mutation2=reorder_mutation,
                                                    num_mutations=num_mutations,
                                                    mutation_probability=mutation_probability)
             next_generation += [offspring1, offspring2]
