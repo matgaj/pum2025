@@ -5,7 +5,7 @@ from datetime import datetime
 import os
 from time import sleep
 
-# random.seed(123) # ustawiamy, jeśli chcemy mieć powtarzalne wyniki
+random.seed(69) # ustawiamy, jeśli chcemy mieć powtarzalne wyniki
 BITS_PER_NOTE = 4 #liczba bitów, na których zapisana będzie wysokość pojedynczej nuty
 
 
@@ -15,6 +15,7 @@ def generate_genome(length):
     Funkcja tworzy wektor o długości length, w którym będą znajdowały się wartości 0 i 1 w losowej kolejności.
     Możesz użyć funkcji random.choices lub dowolnej innej.
     """
+    genome = random.choices([0,1], k=length)
 
     return genome
 
@@ -26,6 +27,7 @@ def generate_population(size, genome_length):
     genome_length - długość chromosomu każdego osobnika
     Wywołaj funkcję generate_genome tak, by uzyskać osobniki.
     """
+    population = [generate_genome(genome_length) for _ in range(size)]
 
     return population
 
@@ -44,6 +46,13 @@ def single_point_crossover(parent1, parent2):
 
     if len(parent1) != len(parent2):
         raise ValueError("Chromosomy rodziców muszą mieć taką samą długość")
+    
+    if len(parent1) <= 1:
+        return parent1, parent2
+    
+    crossover_point = random.randint(1, len(parent1) - 1)
+    offspring1 = parent1[:crossover_point] + parent2[crossover_point:]
+    offspring2 = parent2[:crossover_point] + parent1[crossover_point:]
 
     return offspring1, offspring2
 
@@ -58,6 +67,11 @@ def mutation(genome, num=1, probability=0.5):
     W wyniku mutacji 0 zamienia się na 1, a 1 zamienia się na 0.
     Mutacji ulegają losowe geny (elementy wektora genome).
     """
+    mutated_genome = genome.copy()
+    for _ in range(num):
+        if random.random() < probability:
+            mutation_index = random.randint(0, len(mutated_genome) - 1)
+            mutated_genome[mutation_index] = 1 - mutated_genome[mutation_index]
 
     return mutated_genome
 
