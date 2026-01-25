@@ -5,7 +5,7 @@ from datetime import datetime
 import os
 from time import sleep
 
-random.seed(69) # ustawiamy, jeśli chcemy mieć powtarzalne wyniki
+# random.seed(69) # ustawiamy, jeśli chcemy mieć powtarzalne wyniki
 BITS_PER_NOTE = 4 #liczba bitów, na których zapisana będzie wysokość pojedynczej nuty
 
 
@@ -71,6 +71,7 @@ def multi_point_crossover(parent1, parent2, num_points=2):
     '''
     
     crossover_points = sorted(random.sample(range(1, len(parent1)), num_points))
+    print("Crossover points:", crossover_points)
     offspring1, offspring2 = [], []
     last_point = 0
     for i, point in enumerate(crossover_points + [len(parent1)]):
