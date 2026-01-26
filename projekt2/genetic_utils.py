@@ -218,7 +218,7 @@ def run_evolution(parents, mutation1, mutation2, num_mutations=2, mutation_proba
     if random.random() < 0.5:
         offspring1 = mutation1(offspring1, num=num_mutations, probability=mutation_probability)
     else:
-        offspring1 = mutation2(offspring1, num=num_mutations, probability=mutation_probability)
+        offspring2 = mutation2(offspring2, num=num_mutations, probability=mutation_probability)
         
     return offspring1, offspring2
 
